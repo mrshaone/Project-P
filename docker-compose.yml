@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  core:
+    container_name: core
+    build: 
+      context: core
+      dockerfile: Dockerfile
+    image: core:latest
+    ports:
+      - 1230:1230
+
+      
+  filemanager:
+    container_name: filemanager
+    build:
+      context: filemanager
+      dockerfile: Dockerfile
+    image: filemanager:latest
+    ports:
+      - 1231:1231
+
+  notification:
+    container_name: notification
+    build: 
+      context: notification
+      dockerfile: Dockerfile
+    image: notification:latest
+    ports:
+      - 1232:1232
+
+  mongo:
+    container_name: mongodb-db
+    image: mongo
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/barry/mongodb/database:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
