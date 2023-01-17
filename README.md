@@ -12,7 +12,7 @@ Requirements:
 # Docker
 1. Each services contains `application.properties`, make sure active profile is set to prod.
 2. Run `mvn clean` and then `mvn install` in core, filemanager and notification directory.
-3. On base directory run `docker-compose up -d --build
+3. On base directory run `docker-compose up -d --build`
 <br/><br/>
 ## Default ports:
 Core: [1230](http://localhost:1230)<br/>
