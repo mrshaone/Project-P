@@ -34,7 +34,6 @@ This service is responsible for saving two copy of files given to it, one on loc
 <br/><br/>
 #### API Maps:
 + Upload (POST): [/file](http://localhost:1231/file)
-> Gets the multipart file from core service and store it on MongoDB and local file storage and generates a UUID and sends it as response.
-<br/>
+  > Gets the multipart file from core service and store it on MongoDB and local file storage and generates a UUID and sends it as response.
 + Upload (GET): [/file](http://localhost:1231/file)
-> Gets UUID as parameter and if it's a valid UUID it'll return the corresponding file.  
+  > Gets UUID as parameter and if it's a valid UUID it'll return the corresponding file.  
