@@ -2,6 +2,7 @@ package net.itorbit.pesaram.core.model;
 
 import net.itorbit.pesaram.core.utils.CustomString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
@@ -10,14 +11,15 @@ import java.util.UUID;
 @Document("fileData")
 public class FileData {
     @Id
-    private final UUID id;
+    private String id;
     private String fileName;
     private String fileExtension;
     private long fileSizeInBytes;
     private LocalDate dateModified;
+    private String fileManagerUUID;
 
     public FileData(MultipartFile file) {
-        this.id = UUID.randomUUID();
+        this.id = UUID.randomUUID().toString();
         String rawFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
         this.fileName = CustomString.replaceLast(rawFileName, "\\.\\w+", "");
         setFileExtension(rawFileName);
@@ -25,7 +27,26 @@ public class FileData {
         this.dateModified = LocalDate.now();
     }
 
-    public UUID getId() {
+    public FileData(String id, String fileName, String fileExtension, long fileSizeInBytes, LocalDate dateModified) {
+        this.id = id;
+        this.fileName = fileName;
+        this.fileExtension = fileExtension;
+        this.fileSizeInBytes = fileSizeInBytes;
+        this.dateModified = dateModified;
+    }
+
+    public FileData(String id, String fileName, String fileExtension, long fileSizeInBytes, LocalDate dateModified, String fileManagerUUID) {
+        this.id = id;
+        this.fileName = fileName;
+        this.fileExtension = fileExtension;
+        this.fileSizeInBytes = fileSizeInBytes;
+        this.dateModified = dateModified;
+        this.fileManagerUUID = fileManagerUUID;
+    }
+
+    public FileData() {}
+
+    public String getId() {
         return id;
     }
 
@@ -60,5 +81,13 @@ public class FileData {
 
     public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
+    }
+
+    public String getFileManagerUUID() {
+        return fileManagerUUID;
+    }
+
+    public void setFileManagerUUID(String fileManagerUUID) {
+        this.fileManagerUUID = fileManagerUUID;
     }
 }

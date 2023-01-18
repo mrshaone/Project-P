@@ -2,18 +2,25 @@ package net.itorbit.pesaram.core.controller;
 
 import net.itorbit.pesaram.core.model.FileData;
 import net.itorbit.pesaram.core.service.FileDataService;
+import net.itorbit.pesaram.core.utils.BoundaryGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/file")
 public class FileDataController {
 
     private final FileDataService fileDataService;
@@ -30,6 +37,7 @@ public class FileDataController {
             System.out.println("Uploading file to core service...");
             FileData fd = new FileData(file);
             fileDataService.saveData(fd);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new ResponseStatusException(
@@ -37,5 +45,34 @@ public class FileDataController {
                     "Couldn't save data on database!"
             );
         }
+
+        System.out.println("Sending file to filemanager service...");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(
+                        "multipart/form-data; boundary=" + BoundaryGenerator.generateDefaultBoundary()
+                )
+        );
+        headers.setContentLength(file.getSize());
+
+        MultiValueMap <String, Object> body = new LinkedMultiValueMap<String, Object>();
+        try {
+            body.add("file", file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        HttpEntity<?> entity = new HttpEntity<Object>(body, headers);
+
+        String uri = "http://localhost:1231/file";
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> res = rt.exchange(
+                uri,
+                HttpMethod.POST,
+                entity,
+                String.class
+        );
+
+        System.out.println(res);
     }
 }

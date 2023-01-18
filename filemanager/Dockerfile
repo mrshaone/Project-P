@@ -10,4 +10,5 @@ FROM eclipse-temurin:19-jre-alpine
 WORKDIR /opt/filemanager
 EXPOSE 1231
 COPY --from=builder /opt/filemanager/target/*.jar /opt/filemanager/*.jar
+RUN mkdir uploads
 ENTRYPOINT [ "java", "-jar", "/opt/filemanager/*.jar" ]

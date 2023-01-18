@@ -23,6 +23,6 @@ public class FileDataService {
     public void saveData(FileData fileData){
             System.out.println("Successfully uploaded the file, saving file details...");
             fileDataRepository.save(fileData);
-            System.out.println("File data saved successfully, sending file to S&F service...");
+            System.out.println("File data saved successfully.");
     }
 }
