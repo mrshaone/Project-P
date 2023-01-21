@@ -33,10 +33,9 @@ public class FileController {
         return fileService.saveFile(request.getPart("file"));
     }
 
-
     @GetMapping
-    public ResponseEntity<Resource> downloadFile(@RequestParam("uuid") String uuid) {
-        PFile pfile = fileService.getFile(uuid);
+    public ResponseEntity<Resource> downloadFile(@RequestParam String uuid) throws ServletException, IOException {
+        PFile pfile = fileService.getFile(uuid.toString());
         if (pfile == null) {
             return ResponseEntity.notFound().build();
         }
