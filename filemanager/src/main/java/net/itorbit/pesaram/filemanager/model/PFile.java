@@ -1,11 +1,11 @@
 package net.itorbit.pesaram.filemanager.model;
 
+import jakarta.servlet.http.Part;
 import net.itorbit.pesaram.filemanager.env.Environments;
 import net.itorbit.pesaram.filemanager.utils.FileUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,22 +18,22 @@ public class PFile {
     private String fileData;
     private String filePath;
     @Transient
-    private boolean savedStatus= false;
+    private boolean savedStatus = false;
 
-    public PFile(MultipartFile file){
+    public PFile(Part file) {
         this.id = UUID.randomUUID().toString();
-        String fileName = file.getOriginalFilename();
+        String fileName = file.getName();
         String BASE_DIR = Environments.UPLOAD_DIRECTORY;
         this.filePath = BASE_DIR + "/" + fileName;
         try {
-            this.fileData = new String(file.getBytes());
+            this.fileData = new String(file.getInputStream().readAllBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         try {
             this.save();
-        }catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Could not save file!");
             throw new RuntimeException(e);
         }

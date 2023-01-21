@@ -1,9 +1,10 @@
 package net.itorbit.pesaram.filemanager.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import net.itorbit.pesaram.filemanager.model.PFile;
 import net.itorbit.pesaram.filemanager.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -11,12 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/file")
@@ -28,10 +27,12 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping
-    public String uploadFile(@RequestParam("file") MultipartFile file) {
-        return fileService.saveFile(file);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    public String uploadFile(HttpServletRequest request) throws ServletException, IOException {
+
+        return fileService.saveFile(request.getPart("file"));
     }
+
 
     @GetMapping
     public ResponseEntity<Resource> downloadFile(@RequestParam("uuid") String uuid) {

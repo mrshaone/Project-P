@@ -5,7 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
- * Main Entry of Project P<br/><br/>
+ * Main Entry of Project P<br/>
+ * Make sure that application.properties active profile set to correct profile!<br/><br/>
  * <h3>Default Port: <a href="http://localhost:1230">1230</a></h3>
  * @author <a href="mailto:sh.damghanpour@itorbit.net">MrSha1</a>
  * @version 0.1

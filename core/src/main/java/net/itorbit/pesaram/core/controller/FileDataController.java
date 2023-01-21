@@ -7,17 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/file")
@@ -55,7 +50,7 @@ public class FileDataController {
         );
         headers.setContentLength(file.getSize());
 
-        MultiValueMap <String, Object> body = new LinkedMultiValueMap<String, Object>();
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
         try {
             body.add("file", file.getBytes());
         } catch (IOException e) {
@@ -64,7 +59,7 @@ public class FileDataController {
 
         HttpEntity<?> entity = new HttpEntity<Object>(body, headers);
 
-        String uri = "http://localhost:1231/file";
+        String uri = "http://filemanager:1231/file";
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> res = rt.exchange(
                 uri,
@@ -73,6 +68,11 @@ public class FileDataController {
                 String.class
         );
 
-        System.out.println(res);
+        System.out.println(res.getBody());
+    }
+
+    @GetMapping
+    public void download(@RequestBody String uuid) {
+        //TODO
     }
 }
