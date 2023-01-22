@@ -1,32 +1,24 @@
 package net.itorbit.pesaram.notification;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 
-@RestController
-@RequestMapping(path = "/notification")
+@Component
+
 
 public class NotificationController {
-    @GetMapping
-    public String getUid(@RequestParam("uid") Optional<String> uid) {
-        if (uid.isPresent()) {
-            if (uid.get().isEmpty()) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "request failed"
-                );
-            }
-            return "Upload Successful";
+
+    @RabbitListener(queues = {"${queue.name}"})
+    public void receive(@Payload String fileBody) {
+        System.out.println("Get uuid From Queue ...");
+        if (fileBody.isEmpty()) {
+            System.out.println("uuid is null");
         } else {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "request failed"
-            );
+            System.out.println("File Saved Successfully!,\nuuid: " + fileBody);
         }
+
     }
 
 }

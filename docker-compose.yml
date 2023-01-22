@@ -2,14 +2,14 @@ version: '3.8'
 services:
   core:
     container_name: core
-    build: 
+    build:
       context: core
       dockerfile: Dockerfile
     image: core:latest
     ports:
       - 1230:1230
-
-      
+  
+  
   filemanager:
     container_name: filemanager
     build:
@@ -21,12 +21,21 @@ services:
 
   notification:
     container_name: notification
-    build: 
+    build:
       context: notification
       dockerfile: Dockerfile
     image: notification:latest
     ports:
       - 1232:1232
+
+  rabbitp:
+    container_name: rabbitp
+    build:
+      context: rabbitp
+      dockerfile: Dockerfile
+    image: rabbitp:latest
+    ports:
+      - 1233:1233
 
   mongo:
     container_name: mongodb-db
@@ -39,4 +48,17 @@ services:
     ports:
       - 27017:27017
     restart: unless-stopped
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.11-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    restart: unless-stopped
+
+
+
+
+
 

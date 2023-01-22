@@ -1,10 +1,10 @@
 package net.itorbit.pesaram.core.controller;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import net.itorbit.pesaram.core.model.FileData;
 import net.itorbit.pesaram.core.service.FileDataService;
 import net.itorbit.pesaram.core.utils.BoundaryGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.MongoTransactionException;
 import org.springframework.http.*;
@@ -26,10 +26,12 @@ import java.util.Map;
 public class FileDataController {
 
     private final FileDataService fileDataService;
+    private final Environment env;
 
     @Autowired
-    public FileDataController(FileDataService fileDataService) {
+    public FileDataController(FileDataService fileDataService, Environment env) {
         this.fileDataService = fileDataService;
+        this.env = env;
     }
 
     @PostMapping
@@ -70,8 +72,7 @@ public class FileDataController {
         }
 
         HttpEntity<?> entity = new HttpEntity<Object>(body, headers);
-
-        String uri = "http://filemanager:1231/file";
+        String uri = "http://" + env.getProperty("filemanager.host") + "/file";
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> res = rt.exchange(
                 uri,
@@ -85,6 +86,9 @@ public class FileDataController {
         fileData.setFileManagerUUID(fileManagerUUID);
         fileDataService.update(fileData);
         System.out.println(fileManagerUUID);
+
+        System.out.println("Sending data to rabbit");
+        sendToRabbit(fileManagerUUID);
     }
 
     @GetMapping
@@ -100,7 +104,7 @@ public class FileDataController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<?> entity = new HttpEntity<>(headers);
-        String uri = "http://filemanager:1231/file";
+        String uri = "http://" + env.getProperty("filemanager.host") + "/file";
         String uriTemplate = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("uuid", "{uuid}")
                 .encode()
@@ -115,5 +119,28 @@ public class FileDataController {
                 Resource.class,
                 params
         );
+    }
+
+    public void sendToRabbit(String uuid){
+        System.out.println("Sending uuid from Core to RabbitMQ Queue ...");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        String uri = "http://" + env.getProperty("rabbitp.host") + "/rabbit";
+        String uriTemplate = UriComponentsBuilder.fromHttpUrl(uri)
+                .queryParam("uuid", "{uuid}")
+                .encode()
+                .toUriString();
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", uuid);
+        RestTemplate rt = new RestTemplate();
+        rt.exchange(
+                uriTemplate,
+                HttpMethod.GET,
+                entity,
+                Resource.class,
+                params
+        );
+        System.out.println("uuid Saved to RabbitMQ Queue!");
     }
 }

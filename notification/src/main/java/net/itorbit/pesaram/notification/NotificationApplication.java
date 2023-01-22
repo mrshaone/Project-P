@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Main Entry of Project P<br/><br/>
+ * Notification Service entry point<br/><br/>
  * <h3>Default Port: <a href="http://localhost:1232">1232</a></h3>
  * @author <a href="mailto:a.rahmani@itorbit.net">Amir Mohammad</a>
  * @version 0.1
