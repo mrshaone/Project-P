@@ -27,13 +27,19 @@ This service is the main service, and it is responsible for fetching requests an
 #### API Maps:
 + Upload (POST): [/file](http://localhost:1230/file)
 > Fetches a multipart file from the request and stores the details in MongoDB  and passes the file to filemanager service.
++ Download (GET): [/file?uuid={uuid}](http://localhost:1230/file)
+> Fetches a String UUID and if the file is present it'll return the file in response from filemanager service.
 <br/>
 
 ## filemanager
-This service is responsible for saving two copy of files given to it, one on local file system and one on MongoDB. After successfully saving files it'll generate a UUID. That UUID will be the key for downloading file.
+This service is responsible for saving two copy of files given to it, one on local file system and one on MongoDB. After successfully saving files it'll generate a UUID. That UUID will be the key for downloading file. 
+<br/><b>Important: Don't send data directly to filemanager service and only use core service!</b>
 <br/><br/>
 #### API Maps:
 + Upload (POST): [/file](http://localhost:1231/file)
   > Gets the multipart file from core service and store it on MongoDB and local file storage and generates a UUID and sends it as response.
-+ Upload (GET): [/file](http://localhost:1231/file)
++ Download (GET): [/file](http://localhost:1231/file)
   > Gets UUID as parameter and if it's a valid UUID it'll return the corresponding file.  
+
+## notification
+This service is only an implementation for RabbitMQ and Spring Boot integration. Simply when user pass a file to core service, it'll send UUID to RabbitMQ and notification service consume the queue and displays the UUID.

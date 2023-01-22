@@ -88,11 +88,10 @@ public class FileDataController {
     }
 
     @GetMapping
-    public ResponseEntity<Resource> download(@RequestBody ObjectNode json) throws FileNotFoundException {
-        String fileManagerUUID = json.get("uuid").asText();
-        FileData fileData = fileDataService.findByFileManagerUUID(fileManagerUUID);
+    public ResponseEntity<Resource> download(@RequestParam String uuid) throws FileNotFoundException {
+        FileData fileData = fileDataService.findByFileManagerUUID(uuid);
         if (fileData == null) {
-            System.out.println("Couldn't find file with fileManagerUUID " + fileManagerUUID);
+            System.out.println("Couldn't find file with fileManagerUUID " + uuid);
             throw new FileNotFoundException("Could not find file!");
         }
         System.out.println("Found the file: " + fileData.getFileName());
@@ -107,15 +106,14 @@ public class FileDataController {
                 .encode()
                 .toUriString();
         Map<String, String> params = new HashMap<>();
-        params.put("uuid", fileManagerUUID);
+        params.put("uuid", uuid);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<Resource> res = rt.exchange(
+        return rt.exchange(
                 uriTemplate,
                 HttpMethod.GET,
                 entity,
                 Resource.class,
                 params
         );
-        return res;
     }
 }
